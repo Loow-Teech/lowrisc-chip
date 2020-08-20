@@ -65,7 +65,12 @@ module periph_soc #(UBAUD_DEFAULT=54)
  output wire [7:0]  ram_we,
  output wire [15:0] ram_addr,
  output wire [63:0] ram_wrdata,
- input  wire [63:0] ram_rddata
+ input  wire [63:0] ram_rddata,
+ //segment display test
+ output reg [7:0] an,
+ output reg [7:0] sseg,
+ //pmod 2*4 output
+ output reg [7:0] pmod_ja
  );
  
  wire [19:0] dummy;
@@ -79,6 +84,376 @@ module periph_soc #(UBAUD_DEFAULT=54)
 logic [7:0] one_hot_data_addr;
 logic [63:0] one_hot_rdata[7:0];
 
+//counter
+localparam N = 18;
+reg[N-1:0] regN;
+reg[7:0] hex_in;
+wire [7:0] clk_8;
+assign clk_8 = {8{msoc_clk}};
+always@(posedge msoc_clk or negedge rstn)//clk_div
+    if(!rstn)
+        regN <= 0;
+    else
+        regN <= regN + 1;
+
+always@(*)
+    begin
+        case (regN[N-1:N-7])
+            7'b0000000://0   R
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b0000001://1
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0000010://2
+                begin
+                    pmod_ja <= clk_8 & 8'h3F;
+                end
+            7'b0000011://3
+                begin
+                    pmod_ja <= clk_8 & 8'hC0;
+                end
+            7'b0000100://4
+                begin
+                    pmod_ja <= clk_8 & 8'h24;
+                end
+            7'b0000101://5
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0000110://6
+                begin
+                    pmod_ja <= clk_8 & 8'h26;
+                end
+            7'b0000111://7
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0001000://8
+                begin
+                    pmod_ja <= clk_8 & 8'h19;
+                end
+            7'b0001001://9
+                begin
+                    pmod_ja <= clk_8 & 8'hC0;
+                end
+            7'b0001010://10
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0001011://11
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0001100://12    I
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b0001101://13
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0001110://14
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b0001111://15
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0010000://16
+                begin
+                    pmod_ja <= clk_8 & 8'h3F;
+                end
+            7'b0010001://17
+                begin
+                    pmod_ja <= clk_8 & 8'hC0;
+                end
+            7'b0010010://18
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b0010011://19
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0010100://20
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b0010101://21
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0010110://22
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0010111://23
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0011000://24       S
+                begin
+                    pmod_ja <= clk_8 & 8'h18;
+                end
+            7'b0011001://25
+                begin
+                    pmod_ja <= clk_8 & 8'hC0;
+                end
+            7'b0011010://26
+                begin
+                    pmod_ja <= clk_8 & 8'h24;
+                end
+            7'b0011011://27
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0011100://28
+                begin
+                    pmod_ja <= clk_8 & 8'h24;
+                end
+            7'b0011101://29
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0011110://30
+                begin
+                    pmod_ja <= clk_8 & 8'h22;
+                end
+            7'b0011111://31
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0100000://32
+                begin
+                    pmod_ja <= clk_8 & 8'h31;
+                end
+            7'b0100001://33
+                begin
+                    pmod_ja <= clk_8 & 8'h80;
+                end
+            7'b0100010://34
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0100011://35
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0100100://36       C
+                begin
+                    pmod_ja <= clk_8 & 8'h1F;
+                end
+            7'b0100101://37
+                begin
+                    pmod_ja <= clk_8 & 8'h80;
+                end
+            7'b0100110://38
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b0100111://39
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0101000://40
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b0101001://41
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0101010://42
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b0101011://43
+                begin
+                    pmod_ja <= clk_8 & 8'h40;
+                end
+            7'b0101100://44
+                begin
+                    pmod_ja <= clk_8 & 8'h30;
+                end
+            7'b0101101://45
+                begin
+                    pmod_ja <= clk_8 & 8'h80;
+                end
+            7'b0101110://46
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0101111://47
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0110000://48      -
+                begin
+                    pmod_ja <= clk_8 & 8'h04;
+                end
+            7'b0110001://49
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0110010://50
+                begin
+                    pmod_ja <= clk_8 & 8'h04;
+                end
+            7'b0110011://51
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0110100://52
+                begin
+                    pmod_ja <= clk_8 & 8'h04;
+                end
+            7'b0110101://53
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0110110://54
+                begin
+                    pmod_ja <= clk_8 & 8'h04;
+                end
+            7'b0110111://55
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0111000://56
+                begin
+                    pmod_ja <= clk_8 & 8'h04;
+                end
+            7'b0111001://57
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0111010://58
+                begin
+                    pmod_ja <= clk_8 & 8'h04;
+                end
+            7'b0111011://59
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0111100://60         V
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b0111101://61
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b0111110://62
+                begin
+                    pmod_ja <= clk_8 & 8'h3E;
+                end
+            7'b0111111://63
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b1000000://64
+                begin
+                    pmod_ja <= clk_8 & 8'h01;
+                end
+            7'b1000001://65
+                begin
+                    pmod_ja <= clk_8 & 8'hC0;
+                end
+            7'b1000010://66
+                begin
+                    pmod_ja <= clk_8 & 8'h07;
+                end
+            7'b1000011://67
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b1000100://68
+                begin
+                    pmod_ja <= clk_8 & 8'h38;
+                end
+            7'b1000101://69
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+            7'b1000110://70
+                begin
+                    pmod_ja <= clk_8 & 8'h20;
+                end
+            7'b1000111://71
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+                end
+
+            default:
+                begin
+                    pmod_ja <= clk_8 & 8'h00;
+              end 
+        endcase
+    end
+
+always@(*)//seg
+begin
+        case (regN[N-1:N-3])
+            3'b000:
+                begin
+                    an = 8'b01111111;
+                    hex_in = 7'h47;//L
+                    sseg = {1'b1,hex_in};
+                end
+            3'b001:
+                begin
+                    an = 8'b10111111;
+                    hex_in = 7'h40;//O
+                    sseg = {1'b1,hex_in};
+                end
+            3'b010:
+                begin
+                    an = 8'b11011111;
+                    hex_in = 7'h41;//V
+                    sseg = {1'b1,hex_in};
+                end
+            3'b011:
+                begin
+                    an = 8'b11101111;
+                    hex_in = 7'h41;//V
+                    sseg = {1'b1,hex_in};
+                end
+            3'b100:
+                begin
+                    an = 8'b11110111;
+                    hex_in = 7'h4E;//T
+                    sseg = {1'b1,hex_in};
+                end
+            3'b101:
+                begin
+                    an = 8'b11111011;
+                    hex_in = 7'h6;//E
+                    sseg = {1'b1,hex_in};
+                end
+            3'b110:
+                begin
+                    an = 8'b11111101;
+                    hex_in = 7'h46;//C
+                    sseg = {1'b1,hex_in};
+                end
+            3'b111:
+                begin
+                    an = 8'b11111110;
+                    hex_in = 7'h9;//H
+                    sseg = {1'b1,hex_in};
+                end        
+            default:
+                begin
+                    an = 8'b11111111;
+                    hex_in = 7'hFF;
+                    sseg = {1'b1,hex_in};
+              end 
+        endcase
+end
     ps2 keyb_mouse(
       .clk(msoc_clk),
       .rst(~rstn),
@@ -329,16 +704,19 @@ always @(posedge msoc_clk or negedge rstn)
 	sd_cmd_rst <= 0;
 	sd_clk_rst <= 0;
 	sd_cmd_timeout_reg <= 0;
-        sd_irq_stat_reg <= 0;
-        sd_irq_en_reg <= 0;
-        sd_irq <= 0;
+  sd_irq_stat_reg <= 0;
+  sd_irq_en_reg <= 0;
+  sd_irq <= 0;
 	to_led <= 0;
+
    end
    else
      begin
         sd_irq_stat_reg <= {~sd_detect_reg,sd_detect_reg,sd_status[10],sd_status[8]};
         sd_irq <= |(sd_irq_en_reg & sd_irq_stat_reg);
         from_dip_reg <= from_dip;
+        //an <= 8'b11110000;//switch on if 0, select bit
+        //sseg <= 8'b00000000;//
 	 if (hid_en&(|hid_we)&one_hot_data_addr[2]&~hid_addr[14])
 	  case(hid_addr[6:3])
 	    0: sd_align_reg <= hid_wrdata;
