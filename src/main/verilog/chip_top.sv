@@ -142,6 +142,11 @@ module chip_top
    output wire [21:0] o_led,
    input wire  [15:0] i_dip,
 
+   // fuck segment and pmod
+   output wire [7:0] sseg,
+   output wire [7:0] an,
+   output wire [7:0] pmod_ja,
+
    // push button array
    input wire         GPIO_SW_C,
    input wire         GPIO_SW_W,
@@ -832,6 +837,9 @@ logic mig_sys_clk, clk_pixel;
       .phy_mdio_o ( phy_emdio_o     ),
       .phy_mdio_t ( phy_emdio_t     ),
       .eth_irq    ( eth_irq         ),
+      .an         ( an              ),
+      .sseg       ( sseg            ),
+      .pmod_ja    ( pmod_ja         ),
       .*
       );
 
