@@ -1,5 +1,12 @@
-lowRISC chip
+lowRISC chip (Added PMOD and Seg LED function)
 ==============================================
+
+Intro: PMOD will continously generate a 'RISC-V' letter 8 channel logic signal, Seg LEDs will display 'LovvTech' (LowTech).
+
+![](https://github.com/Loow-Teech/lowrisc-chip/tree/refresh-v0.6/READMEPICS/riscv.png)
+![](https://github.com/Loow-Teech/lowrisc-chip/tree/refresh-v0.6/READMEPICS/Lovvtech.png)
+
+
 
 The root git repo for lowRISC development and FPGA demos.
 
